@@ -1,0 +1,4 @@
+Name                ID Number           Job Type            Gross Salary        
+Jack Apple          1235                Factory Worker      1056.00             
+Jack Clapton        1231                Office Worker       1320.00             
+Jack Bear           1234                Management          1980.00             

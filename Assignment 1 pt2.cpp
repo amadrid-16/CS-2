@@ -7,85 +7,7 @@ Assignment 1
 Grade: 10/10
 */
 
-//Algorithm
-/*
-Input
-Get user data from file
-Check for validity
-Name
-First
-No checks required
-Last
-No checks required
-Employee ID
-Make sure the input is not less than 0
-Make sure the input is not greater than 9999
-Employee Code
-Make sure the input is of char variable type
-Make sure the char is 'S', 'O', or 'M'
-Must be capital
-Other value is invalid, print error
-set salary to 0
-Job Classification
-Must be 1, 2, or 3
-Other value is invalid, print error
-set
-Years of Service
-Must be under 50
-Must be >= 0
-Other value is invalid, print error
-set salary to 0
-Education
-Must be 1, 2, 3, or 4
-Other value is invalid, print error
-set salary to 0
 
-Put user data into respective variables
-
-Process
-Calculate salary
-First
-No calculation
-Last
-No calculation
-Employee Code
-S base pay = 800.0
-O base pay = 1000.0
-M base pay = 1500.0
-Invalid:
-salary = 0
-+= Error:Employee Code
-Job Classification
-
-IF SALARY is NOT -1
-1 = add 5% base
-2 = add 10% base
-3 = add 20% base
-Invalid:
-salary = 0
-+= Error:Job Classification
-Years of Service
-IF SALARY is NOT -1
-0-10 = add 5% to base
-10+ = add 1%/year
-Invalid:
-salary = 0
-+= Error:Years of Service
-Education
-IF SALARY is NOT -1
-1 = add 0% base
-2 = add 5% base
-3 = add 12% base
-4 = add 20% base
-Invalid:
-salary = 0
-+= Error:Education Code
-Output
-Print in table format
-If salary = 0 print error message
-
-
-*/
 
 //Includes
 #include <iostream>
@@ -109,7 +31,7 @@ struct Office{
 	string officeName = "";
 	int numEmps = 0;
 };
-
+/////////////////////////////////////////
 void getArrData(Employee Arr[]);
 void getData(Employee & emp1);
 void getEmp(Employee & emp1, fstream & fin, int index);
@@ -122,6 +44,14 @@ void calcSal(Employee & emp1);
 
 void printHeader();
 void printEmp(Employee & emp1);
+
+void printHeaderTF(ofstream & fout);
+void printEmpTF(Employee emp1, ofstream & fout);
+
+void printAllEmp(Employee Arr[MAX]);
+void printAllEmpTF(Employee Arr[MAX], ofstream & fout);
+
+
 void checkData(Employee & emp1);
 
 void sortMenu();
@@ -132,12 +62,31 @@ void searchList(Employee Arr[MAX]);
 void runStuff(Employee Arr[MAX], char selection);
 void printMenu();
 char makeSelect();
-void sortByName();
-void sortByID();
-void sortBySal();
+
+void sortString(Employee Arr[MAX], int index);
+void sortByName(Employee Arr[MAX]);
+int checkNameOrder(Employee Arr[MAX]);
+
+int searchByName(Employee Arr[MAX], string sName);
+int searchByID(Employee Arr[MAX], int sID);
+
+
+void sortByID(Employee Arr[MAX]);
+int checkIDOrder(Employee Arr[MAX]);
+
+
+void sortBySal(Employee Arr[MAX]);
+int checkSalOrder(Employee Arr[MAX]);
+
+void printSubMenu();
+void subList(Employee Arr[MAX]);
 
 void exitProgram();
 
+
+
+///////////////////////////////////
+//MAIN FUNCTION
 int main(){
 	Employee Arr[MAX];
 
@@ -168,6 +117,8 @@ int main(){
 
 
 }
+
+///////////////////////////////////
 void getArrData(Employee Arr[]){
 	
 	fstream fin;
@@ -186,14 +137,91 @@ void getArrData(Employee Arr[]){
 	while (!fin.eof()&& i != MAX-1){
 		
 		i++;
-		cout << i << endl;
+		//cout << i << endl;
 		getEmp(Arr[i],fin, i);
+		
 
 		if (i == MAX-1){
 			cout << "Error: Reached Max number of employees";
 		}
 
 	}
+	string filename;
+	ofstream fout;
+	
+	cout << endl << "Please give an output file name: ";
+	getline(cin, filename);
+	fout.open(filename);
+	fout << left << showpoint << fixed << setprecision(2);
+	
+	fout << "Unsorted" << endl;
+	printHeaderTF(fout);
+	
+	for (int i = 0; i < MAX; i++){
+			
+		if (Arr[i].lName == ""){
+
+		}
+		else{
+			printEmpTF(Arr[i], fout);
+		}
+
+	
+	}
+
+	fout << endl << endl;
+	sortByID(Arr);
+	fout << "Sorted by ID" << endl;
+	printHeaderTF(fout);
+
+	for (int i = 0; i < MAX; i++){
+
+		if (Arr[i].lName == ""){
+
+		}
+		else{
+			printEmpTF(Arr[i], fout);
+		}
+
+
+	}
+	fout << endl << endl;
+	sortByName(Arr);
+	fout << "Sorted by Name" << endl;
+	printHeaderTF(fout);
+
+	for (int i = 0; i < MAX; i++){
+
+		if (Arr[i].lName == ""){
+
+		}
+		else{
+			printEmpTF(Arr[i], fout);
+		}
+
+
+	}
+	fout << endl<<endl;
+	
+	sortBySal(Arr);
+	fout << "Sorted by Salary" << endl;
+	printHeaderTF(fout);
+
+	for (int i = 0; i < MAX; i++){
+
+		if (Arr[i].lName == ""){
+
+		}
+		else{
+			printEmpTF(Arr[i], fout);
+		}
+
+
+	}
+	
+	
+	
+	
 }
 void getData(Employee & emp1){
 	fstream fin;
@@ -225,7 +253,7 @@ void getEmp(Employee & emp1, fstream & fin,int index){
 	
 	}
 	else{
-		cout << "Employee First Name: " << emp1.fName << endl;
+		//cout << "Employee First Name: " << emp1.fName << endl;
 
 		getline(fin, emp1.lName, '\n');
 		if (fin.eof()){
@@ -237,7 +265,7 @@ void getEmp(Employee & emp1, fstream & fin,int index){
 			exit(0);
 
 		}
-		cout << "Employee Last Name: " << emp1.lName << endl;
+		//cout << "Employee Last Name: " << emp1.lName << endl;
 
 		fin >> emp1.empCode;
 		if (fin.eof()){
@@ -249,7 +277,7 @@ void getEmp(Employee & emp1, fstream & fin,int index){
 			exit(0);
 
 		}
-		cout << "Employee Code: " << emp1.empCode << endl;
+		//cout << "Employee Code: " << emp1.empCode << endl;
 
 		fin >> emp1.empID;
 		if (fin.eof()){
@@ -261,7 +289,7 @@ void getEmp(Employee & emp1, fstream & fin,int index){
 			exit(0);
 
 		}
-		cout << "Employee ID: " << emp1.empID << endl;
+		//cout << "Employee ID: " << emp1.empID << endl;
 
 		fin >> emp1.jobCode;
 		if (fin.eof()){
@@ -273,7 +301,7 @@ void getEmp(Employee & emp1, fstream & fin,int index){
 			exit(0);
 
 		}
-		cout << "Employee Job Code: " << emp1.jobCode << endl;
+		//cout << "Employee Job Code: " << emp1.jobCode << endl;
 
 		fin >> emp1.yearsServ;
 		if (fin.eof()){
@@ -285,7 +313,7 @@ void getEmp(Employee & emp1, fstream & fin,int index){
 			exit(0);
 
 		}
-		cout << "Employee Years Served: " << emp1.yearsServ << endl;
+		//cout << "Employee Years Served: " << emp1.yearsServ << endl;
 
 		fin >> emp1.edCode;
 		if (fin.eof()){
@@ -297,21 +325,23 @@ void getEmp(Employee & emp1, fstream & fin,int index){
 			exit(0);
 
 		}
-		cout << "Employee Education Code: " << emp1.edCode << endl;
+		//cout << "Employee Education Code: " << emp1.edCode << endl;
 		checkData(emp1);
 		calcSal(emp1);
-		cout << endl << endl << " " << emp1.errorStat << endl;
 		fin.ignore();
+		printEmp(emp1);
+		cout << endl << endl << " " << emp1.errorStat << endl;
 	}
+	
 }
 void checkID(Employee & emp1){
 	if (emp1.empID<0 || emp1.empID>9999){
-		cout << "Error: Invalid Employee ID" << endl;
+		//cout << "Error: Invalid Employee ID" << endl;
 		emp1.errorStat = "Error: Invalid Employee ID\n";
 		emp1.empID = -1;
 	}
 	else{
-		cout << "emp ID good" << endl;
+		//cout << "emp ID good" << endl;
 	}
 }
 void checkEmpCode(Employee & emp1) {
@@ -325,21 +355,21 @@ void checkEmpCode(Employee & emp1) {
 	*/
 	if (emp1.gsal == -1){
 		if (!(emp1.empCode == 'S') && !(emp1.empCode == 'O') && !(emp1.empCode == 'M')){
-			cout << "Error: Invalid Employee Code" << endl;
+			//cout << "Error: Invalid Employee Code" << endl;
 			emp1.errorStat = "Error: Invalid Employee Code\n";
 		}
 		else{
-			cout << "emp code good" << endl;
+			//cout << "emp code good" << endl;
 		}
 	}
 	else{
 		if (!(emp1.empCode == 'S') && !(emp1.empCode == 'O') && !(emp1.empCode == 'M')){
-			cout << "Error: Invalid Employee Code" << endl;
+			//cout << "Error: Invalid Employee Code" << endl;
 			emp1.errorStat = "Error: Invalid Employee Code\n";
 			emp1.gsal = -1;
 		}
 		else{
-			cout << "emp code good" << endl;
+			//cout << "emp code good" << endl;
 		}
 	}
 
@@ -354,21 +384,21 @@ void checkJobClassi(Employee & emp1){
 	set*/
 	if (emp1.gsal == -1){
 		if (!(emp1.jobCode == 1) && !(emp1.jobCode == 2) && !(emp1.jobCode == 3)){
-			cout << "Error: Invalid Job Code" << endl;
+			//cout << "Error: Invalid Job Code" << endl;
 			emp1.errorStat += "Error: Invalid Job Code\n";
 		}
 		else{
-			cout << "job code good" << endl;
+			//cout << "job code good" << endl;
 		}
 	}
 	else{
 		if (!(emp1.jobCode == 1) && !(emp1.jobCode == 2) && !(emp1.jobCode == 3)){
-			cout << "Error: Invalid Job Code" << endl;
+			//cout << "Error: Invalid Job Code" << endl;
 			emp1.errorStat = "Error: Invalid Job Code\n";
 			emp1.gsal = -1;
 		}
 		else{
-			cout << "job code good" << endl;
+			//cout << "job code good" << endl;
 		}
 	}
 }
@@ -381,21 +411,21 @@ void checkYOS(Employee & emp1){
 	if (emp1.gsal == -1){
 
 		if ((emp1.yearsServ < 0) || (emp1.yearsServ>  50)){
-			cout << "Error: Invalid YOS" << endl;
+			//cout << "Error: Invalid YOS" << endl;
 			emp1.errorStat += "Error: Invalid YOS\n";
 		}
 		else{
-			cout << "yos good" << endl;
+			//cout << "yos good" << endl;
 		}
 	}
 	else{
 		if ((emp1.yearsServ < 0) || (emp1.yearsServ>  50)){
-			cout << "Error: Invalid YOS" << endl;
+			//cout << "Error: Invalid YOS" << endl;
 			emp1.errorStat = "Error: Invalid YOS\n";
 			emp1.gsal = -1;
 		}
 		else{
-			cout << "yos good" << endl;
+			//cout << "yos good" << endl;
 		}
 	}
 
@@ -408,21 +438,21 @@ void checkEd(Employee & emp1){
 	set salary to 0*/
 	if (emp1.gsal == -1){
 		if (!(emp1.edCode == 1) && !(emp1.edCode == 2) && !(emp1.edCode == 3) && !(emp1.edCode == 4)){
-			cout << "Error: Invalid Ed Code" << endl;
+			//cout << "Error: Invalid Ed Code" << endl;
 			emp1.errorStat += "Error: Invalid Ed Code\n";
 		}
 		else{
-			cout << "Ed good" << endl;
+			//cout << "Ed good" << endl;
 		}
 	}
 	else{
 		if (!(emp1.edCode == 1) && !(emp1.edCode == 2) && !(emp1.edCode == 3) && !(emp1.edCode == 4)){
-			cout << "Error: Invalid Ed Code" << endl;
+			//cout << "Error: Invalid Ed Code" << endl;
 			emp1.errorStat = "Error: Invalid Ed Code\n";
 			emp1.gsal = -1;
 		}
 		else{
-			cout << "Ed good" << endl;
+			//cout << "Ed good" << endl;
 		}
 	}
 
@@ -513,7 +543,7 @@ void calcSal(Employee & emp1){
 
 
 }
-
+//PRINTING
 void printHeader(){
 	cout << setw(20) << "Name" << setw(20) << "ID Number" << setw(20) << "Job Type" << setw(20) << "Gross Salary" << endl;
 }
@@ -538,6 +568,55 @@ void printEmp(Employee & emp1){
 	}
 
 }
+
+void printHeaderTF(ofstream & fout){
+	
+	fout << setw(20) << "Name" << setw(20) << "ID Number" << setw(20) << "Job Type" << setw(20) << "Gross Salary" << endl;
+}
+void printEmpTF(Employee emp1, ofstream & fout){
+	string name = emp1.fName + " " + emp1.lName;
+
+	fout << setw(20) << name;
+	if (emp1.empID != -1){
+		fout << setw(20) << emp1.empID;
+	}
+	else{
+		fout << setw(20) << "Employee ID Invalid";
+	}
+
+	fout << setw(20) << emp1.jobType;
+
+	if (emp1.gsal != -1){
+		fout << setw(20) << emp1.gsal << endl;
+	}
+	else{
+		fout << setw(20) << "Salary could not be computed" << endl;
+	}
+}
+
+void printAllEmp(Employee Arr[MAX]){
+	printHeader();
+	for (int i = 0; i < MAX; i++){
+		if (Arr[i].gsal == 0 || Arr[i].gsal == -1){
+
+		}
+		else{
+			printEmp(Arr[i]);
+		}
+	}
+}
+void printAllEmpTF(Employee Arr[MAX], ofstream & fout){
+	printHeaderTF(fout);
+	for (int i = 0; i < MAX; i++){
+		if (Arr[i].gsal == 0 || Arr[i].gsal == -1){
+
+		}
+		else{
+			printEmpTF(Arr[i], fout);
+		}
+	}
+}
+
 void checkData(Employee & emp1){
 	checkEmpCode(emp1);
 	checkID(emp1);
@@ -545,7 +624,7 @@ void checkData(Employee & emp1){
 	checkYOS(emp1);
 	checkEd(emp1);
 }
-
+//SORT MENU
 void sortMenu(){
 	cout << endl << "Sort Menu" << endl;
 	cout << "'N' - Sort by Last names" << endl;
@@ -557,18 +636,21 @@ void sortList(Employee Arr[MAX]){
 	char selection;
 	sortMenu();
 	selection = makeSelect();
+	
 	switch (selection){
-	case'N':
+	case 'N':
 	case 'n':
-		sortByName();
+		//cout << "sortbyname" << endl;
+		sortByName(Arr);
+
 		break;
 	case 'I':
-	case'i':
-		sortByID();
+	case 'i':
+		sortByID(Arr);
 		break;
 	case 'S':
 	case 's':
-		sortBySal();
+		sortBySal(Arr);
 		break;
 	default:
 		cout << endl << "Error: thats not an option" << endl;
@@ -577,36 +659,62 @@ void sortList(Employee Arr[MAX]){
 
 
 }
+//SEARCH MENU
 void searchMenu(){
 	cout << endl << "Search Menu" << endl;
 	cout << "'N' - Search by Last names" << endl;
 	cout << "'I' - Search by ID" << endl;
-	cout << "'S' - Search by Salary" << endl;
+	//cout << "'S' - Search by Salary" << endl;
 }
 void searchList(Employee Arr[MAX]){
 	char selection;
+	string sName;
+	int sID;
 	searchMenu();
 	selection = makeSelect();
 	switch (selection){
 	case'N':
 	case 'n':
-		sortByName();
+		
+		cout << "What name would you like to search?" << endl;
+		cin >> sName;
+		if (searchByName(Arr, sName) >= 0){
+			printHeader();
+			printEmp(Arr[searchByName(Arr, sName)]);
+			
+		}
+		else{
+			cout << "That person does not exist in the system" << endl;
+		}
+		
 		break;
 	case 'I':
 	case'i':
-		sortByID();
+		
+
+		cout << "What name ID you like to search?" << endl;
+		cin >> sID;
+		if (searchByID(Arr, sID) >= 0){
+			printHeader();
+			printEmp(Arr[searchByID(Arr, sID)]);
+
+		}
+		else{
+			cout << "That person does not exist in the system" << endl;
+		}
 		break;
 	case 'S':
 	case 's':
-		sortBySal();
+		//searchBySal();
 		break;
 	default:
 		cout << endl << "Error: thats not an option" << endl;
 
 	}
 }
-
+//MAIN MENU
 void runStuff(Employee Arr[MAX], char selection){
+	
 	switch (selection){
 
 	case 'S':
@@ -615,7 +723,13 @@ void runStuff(Employee Arr[MAX], char selection){
 		break;
 	case 'O':
 	case 'o':
+		//cout << "sortlist" << endl;
 		sortList(Arr);
+		break;
+	case 'P':
+	case 'p':
+		
+		subList(Arr);
 		break;
 
 	case 'X':
@@ -631,6 +745,7 @@ void printMenu(){
 	cout << endl << "MENU" << endl;
 	cout << "'S' - Search" << endl;
 	cout << "'O' - Sort" << endl;
+	cout << "'P' - Print" << endl;
 	cout << "'X' - Exit Program" << endl;
 
 }
@@ -642,25 +757,208 @@ char makeSelect(){
 
 	return selection;
 }
+// SORT BY NAME
+void sortByName(Employee Arr[MAX]){
+	
+	int i = 0;
+	int index;
+	Employee currEmp;
+	while (checkNameOrder(Arr) >= 0){
+		index = checkNameOrder(Arr);
+		currEmp = Arr[index];
+		Arr[index] = Arr[index + 1];
+		Arr[index + 1] = currEmp;
+	}
+	
+}
+void sortString(Employee Arr[MAX], int index){
+	//if first letter of last names are equal move to next character
+	//then switch them around in the array
+	//otherwise just switch the two array members
+	Employee currEmp;
+	int i = 0;
+	if (Arr[index].lName.substr(0, 1) == Arr[index + 1].lName.substr(0, 1)){
+		while (Arr[index].lName.substr(i, 1) == Arr[index + 1].lName.substr(i, 1)){
 
-void sortByName(){
-	cout << "Sorting by Name" << endl;
+			if (Arr[index].lName.substr(i + 1, 1) > Arr[index + 1].lName.substr(i + 1, 1)){
+
+				currEmp = Arr[index];
+				Arr[index] = Arr[index + 1];
+				Arr[index + 1] = currEmp;
+			}
+			i++;
+		}
+
+	}
+	else if (Arr[index].lName.substr(0, 1) > Arr[index + 1].lName.substr(0, 1)){
+		currEmp = Arr[index];
+		Arr[index] = Arr[index + 1];
+		Arr[index + 1] = currEmp;
+	}
+	
+	
+	
 }
-void sortByID(){
-	cout << "Sorting by ID" << endl;
-}
-void sortBySal(){
-	cout << "Sorting by Salary" << endl;
+int checkNameOrder(Employee Arr[MAX]){
+	//check name order and return index where there is an out of order part
+	int index = -1;
+	for (int i = 0; i < MAX-1; i++){
+		if (Arr[i].lName==""){
+
+		}
+		else if (Arr[i].lName.substr(0, 1) == Arr[i + 1].lName.substr(0, 1)){
+			sortString(Arr,i);
+
+		}
+		else if (Arr[i].lName.substr(0, 1) > Arr[i + 1].lName.substr(0, 1)){
+			index = i;
+			return index;
+		}
+	}
+	return index;
 }
 
-void searchByName(){
-	cout << "Searching by Name" << endl;
+//SORT BY ID
+void sortByID(Employee Arr[MAX]){
+	/*for (int i = 0; i < MAX - 1; i++){
+		cout << Arr[i].empID << endl;
+	}*/
+	int i = 0;
+	int index;
+	Employee currEmp;
+	while (checkIDOrder(Arr) >= 0){
+		index = checkIDOrder(Arr);
+		currEmp = Arr[index];
+		Arr[index] = Arr[index + 1];
+		Arr[index + 1] = currEmp;
+	}
+	/*for (int i = 0; i < MAX ; i++){
+		if (Arr[i].empID == -1){
+
+		}
+		else{
+			cout << Arr[i].empID << endl;
+		}
+	}*/
 }
-void searchByID(){
-	cout << "Searching by ID" << endl;
+int checkIDOrder(Employee Arr[MAX]){
+	int index = -1;
+	for (int i = 0; i < MAX - 1; i++){
+		if (Arr[i].empID == -1){
+
+		}
+		else if (Arr[i].empID == Arr[i + 1].empID){
+			sortString(Arr, i);
+
+		}
+		else if (Arr[i].empID > Arr[i + 1].empID){
+			index = i;
+			return index;
+		}
+	}
+	return index;
 }
-void searchBySal(){
-	cout << "Searching by Salary" << endl;
+
+//SORT BY SALARY
+void sortBySal(Employee Arr[MAX]){
+	int i = 0;
+	int index;
+	Employee currEmp;
+	
+	while (checkSalOrder(Arr) >= 0){
+		//cout << "boi";
+		index = checkSalOrder(Arr);
+		//printHeader();
+		//printEmp(Arr[index]);
+		currEmp = Arr[index];
+		Arr[index] = Arr[index + 1];
+		Arr[index + 1] = currEmp;
+	}
+	/*for (int i = 0; i < MAX; i++){
+		if (Arr[i].gsal == 0 || Arr[i].gsal==-1){
+
+		}
+		else{
+			cout << Arr[i].gsal << endl;
+		}
+	}*/
+}
+int checkSalOrder(Employee Arr[MAX]){
+	int index = -1;
+	
+	for (int i = 0; i < MAX - 1; i++){
+		
+		if (Arr[i].gsal == -1 || Arr[i].gsal == 0){
+			
+		}
+		else if (Arr[i].gsal == Arr[i + 1].gsal){
+			
+			sortString(Arr, i);
+			
+
+		}
+		else if (Arr[i].gsal > Arr[i + 1].gsal){
+			index = i;
+			
+			return index;
+		}
+		
+	}
+	return index;
+}
+
+//SEARCH
+int searchByName(Employee Arr[MAX], string sName){
+	
+	
+	for (int i = 0; i < MAX; i++){
+		if (Arr[i].lName == sName){
+			return i;
+		}
+	}
+	return -1;
+}
+int searchByID(Employee Arr[MAX], int sID){
+	for (int i = 0; i < MAX; i++){
+		if (Arr[i].empID == sID){
+			return i;
+		}
+	}
+	return -1;
+}
+
+//PRINT SUB MENU
+void printSubMenu(){
+	cout << "'F' - Print to file" << endl;
+	cout << "'C' - Print to Console" << endl;
+}
+void subList(Employee Arr[MAX]){
+	string filename;
+	ofstream fout;
+	char selection2;
+	printSubMenu();
+	selection2 = makeSelect();
+
+	switch (selection2){
+		case 'F':
+		case 'f':
+		
+			cout << endl << "Please give an output file name: ";
+			getline(cin, filename);
+			fout.open(filename);
+			fout << left << showpoint << fixed << setprecision(2);
+			printAllEmpTF(Arr,fout);
+
+			break;
+		case 'C':
+		case 'c':
+			printAllEmp(Arr);
+			break;
+	
+		default:
+			cout << endl << "Error: thats not an option" << endl;
+
+		}
 }
 
 void exitProgram(){

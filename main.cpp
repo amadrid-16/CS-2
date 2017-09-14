@@ -8,6 +8,7 @@ int main(){
 	ofstream fout;
 	while (!done)
 	{
+		cout << left << showpoint << fixed << setprecision(2);
 		cout<< endl << "**************Main Menu**************" << endl
 			<< "1. Create an account from keyboard data entry. " << endl
 			<< "2. Create an account from input file data entry." << endl
@@ -41,11 +42,11 @@ int main(){
 			Acct1.print();
 			flag = true;
 		}
-		//else if (choice > 2 && choice < 10 && flag = true){
+		else if (((choice >= 3) && (choice <= 9)) && (flag == true)){
 			
-			else if (choice == 3)
+			if (choice == 3)
 			{//print acct balance to console
-				cout << "Balance: " << Acct1.getBalance()<< endl;
+				cout << "Balance: $" << Acct1.getBalance()<< endl;
 			}
 			else if (choice == 4)
 			{//withdraw money
@@ -80,10 +81,13 @@ int main(){
 			{//print account number only of acct holder to console
 				cout << "Acct Num: " << Acct1.getAccountNumber() << endl;
 			}
-		//}
+		}
 		else if (choice == 10)
 		{//exit
 			done = true;
+		}
+		else if (flag == false){
+			cout << "Account has not yet been inputted." << endl;
 		}
 		else
 		{

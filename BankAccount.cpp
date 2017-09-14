@@ -44,7 +44,7 @@ void BankAccount::withdraw(double money){
 		balance -= money;
 	}
 	else if (nbal <= 0){//value is zero or negative
-		cout << "Deposit must be greater than 0. Balance is unchanged" << endl;
+		cout << "Withdraw must less than current balance. Balance is unchanged" << endl;
 	}
 }
 void BankAccount::setAccountNumber(const string & actN){
